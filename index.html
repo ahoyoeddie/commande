@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="fr">
-    <link rel="icon" href="https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/72x72/2764.png">
 <head>
+    <link rel="icon" href="https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/72x72/2764.png">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Pour Mélissa ❤️</title>
@@ -36,6 +36,7 @@
             background-size: 40px 40px;
             opacity: 0.15;
             z-index: 0;
+            transition: transform 0.2s ease-out;
         }
 
         .container {
@@ -99,6 +100,26 @@
             color: var(--primary);
         }
 
+        /* Bouton Musique Flottant */
+        #musicBtn {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 45px;
+            height: 45px;
+            background: white;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            cursor: pointer;
+            z-index: 1000;
+            font-size: 1.2rem;
+            border: 1px solid var(--secondary);
+            display: none; /* Apparaît après le clic sur Oui */
+        }
+
         .cursor { display: inline-block; width: 8px; background: var(--primary); animation: blink 0.7s infinite; margin-left: 2px; }
         @keyframes blink { 50% { opacity: 0; } }
 
@@ -117,6 +138,9 @@
 </head>
 <body>
     <div id="bg-pattern"></div>
+
+    <audio id="player" src="musique.mp3" loop></audio>
+    <div id="musicBtn" onclick="toggleMusic()">🎵</div>
 
     <div class="container" id="mainBox">
         <div id="ui-question">
@@ -141,9 +165,12 @@
         const letterContent = document.getElementById('letterContent');
         const textTarget = document.getElementById('textTarget');
         const sigTarget = document.getElementById('sigTarget');
+        const audio = document.getElementById('player');
+        const musicBtn = document.getElementById('musicBtn');
         
         let yesScale = 1;
 
+        // Interaction bouton NON
         noBtn.addEventListener('mouseover', moveButton);
         noBtn.addEventListener('click', moveButton);
 
@@ -158,14 +185,30 @@
             yesBtn.style.transform = `scale(${yesScale})`;
         }
 
-        // Ton nouveau texte personnalisé
+        // Musique Toggle
+        function toggleMusic() {
+            if (audio.paused) {
+                audio.play();
+                musicBtn.innerText = "🎵";
+            } else {
+                audio.pause();
+                musicBtn.innerText = "🔇";
+            }
+        }
+
+        // Textes
         const bodyText = "Depuis que tu fais partie de ma vie, tout a pris une autre couleur. Ta présence me fait du bien, me rassure et me fait sourire sans effort.\n\nEn ce jour de Saint-Valentin, j’ai simplement envie de te dire que je suis heureux de t’avoir à mes côtés et que j’ai envie de continuer cette histoire avec toi.";
         const footerText = "Avec tout mon amour,\nEddie";
 
+        // Clic sur OUI
         yesBtn.addEventListener('click', () => {
             uiQuestion.style.display = 'none';
             noBtn.style.display = 'none';
             letterContent.style.display = 'block';
+            musicBtn.style.display = 'flex';
+            
+            // Lancer la musique
+            audio.play().catch(e => console.log("L'audio n'a pas pu démarrer automatiquement"));
             
             typeWriter(bodyText, textTarget, 40, () => {
                 setTimeout(() => {
